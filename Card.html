@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>生日翻牌遊戲</title>
+<style>
+  body { font-family: sans-serif; text-align: center; background: #fff5f9; }
+  h1 { margin: 20px 0 8px; }
+  #grid { display: grid; grid-template-columns: repeat(4, 120px); gap: 12px; justify-content: center; margin: 20px auto; }
+  .card { width: 120px; height: 160px; perspective: 600px; cursor: pointer; }
+  .card-inner { width:100%; height:100%; transition: transform 0.4s; transform-style: preserve-3d; position: relative; }
+  .card.flipped .card-inner { transform: rotateY(180deg); }
+  .card-front, .card-back { position:absolute; inset:0; border-radius:12px; backface-visibility:hidden; }
+  .card-front { background:#a78bfa; display:flex; align-items:center; justify-content:center; color:white; font-size:36px; }
+  .card-back { transform:rotateY(180deg); overflow:hidden; }
+  .card-back img { width:100%; height:100%; object-fit:cover; border-radius:12px; }
+  .card.matched .card-back { outline: 3px solid #22c55e; }
+  #msg { font-size:18px; margin: 10px; min-height:30px; color:#7c3aed; }
+  #final { display:none; font-size:20px; margin:20px; color:#be185d; }
+</style>
+</head>
+<body>
+
+<h1>🎂 生日快樂！</h1>
+<div id="msg">翻開牌，找到相同的一對！</div>
+<div id="grid"></div>
+<div id="final"></div>
+
+<script>
+const pairs = [
+  { img: "photo1.jpg", msg: "N！" },
+  { img: "photo2.jpg", msg: "I！" },
+  { img: "photo3.jpg", msg: "J！" },
+  { img: "photo4.jpg", msg: "U！" },
+  { img: "photo5.jpg", msg: "N！" },
+  { img: "photo6.jpg", msg: "❤️！🎉" },
+]
+
+// 洗牌
+const deck = [...pairs, ...pairs].sort(() => Math.random() - 0.5)
+
+const grid = document.getElementById('grid')
+const msg = document.getElementById('msg')
+let flipped = [], matched = 0, lock = false
+
+deck.forEach(data => {
+  const card = document.createElement('div')
+  card.className = 'card'
+  card.dataset.img = data.img
+  card.dataset.msg = data.msg
+  card.innerHTML = `
+    <div class="card-inner">
+      <div class="card-front">🎁</div>
+      <div class="card-back"><img src="${data.img}"></div>
+    </div>`
+  card.addEventListener('click', () => {
+    if (lock || card.classList.contains('flipped') || card.classList.contains('matched')) return
+    card.classList.add('flipped')
+    flipped.push(card)
+    if (flipped.length === 2) {
+      lock = true
+      if (flipped[0].dataset.img === flipped[1].dataset.img) {
+        flipped.forEach(c => c.classList.add('matched'))
+        msg.textContent = '✨ ' + flipped[0].dataset.msg
+        matched++
+        flipped = []
+        lock = false
+        if (matched === pairs.length) {
+          document.getElementById('final').style.display = 'block'
+          document.getElementById('final').textContent = '🎊 你找到所有的牌了！趕快回去輸入通關密語吧！🎊'
+        }
+      } else {
+        setTimeout(() => {
+          flipped.forEach(c => c.classList.remove('flipped'))
+          flipped = []
+          lock = false
+          msg.textContent = '再試一次！'
+        }, 900)
+      }
+    }
+  })
+  grid.appendChild(card)
+})
+</script>
+</body>
+</html>
