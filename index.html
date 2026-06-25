@@ -21,8 +21,8 @@
 </head>
 <body>
 
-<h1>🎂 生日快樂！</h1>
-<div id="msg">翻開牌，找到相同的一對！</div>
+<h1>🎂 生日快樂！歡迎來到第二關翻牌記憶！！！</h1>
+<div id="msg">翻開卡片，找到相同的一對，並記住提示詞！</div>
 <div id="grid"></div>
 <div id="final"></div>
 
@@ -67,7 +67,7 @@ deck.forEach(data => {
         lock = false
         if (matched === pairs.length) {
           document.getElementById('final').style.display = 'block'
-          document.getElementById('final').textContent = '🎊 你找到所有的牌了！趕快回去輸入通關密語吧！🎊'
+          document.getElementById('final').textContent = '🎊 恭喜你找到所有的牌了！趕快回去輸入通關密語吧！🎊'
         }
       } else {
         setTimeout(() => {
